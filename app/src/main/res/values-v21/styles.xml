@@ -1,0 +1,24 @@
+<resources>
+
+    <style name="ToolbarTheme" parent="AppTheme.NoActionBar">
+        <!-- Customize your theme here. -->
+        <!--        <item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
+        <!--        <item name="android:statusBarColor">@android:color/transparent</item>-->
+    </style>
+
+    <!-- Material Animations -->
+    <style name="MaterialAnimations" parent="ToolbarTheme">
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">false</item>
+        <item name="android:windowAllowReturnTransitionOverlap">false</item>
+    </style>
+
+    <!--<style name="BaseSharedElementActivity" parent="MaterialAnimations">-->
+    <!--&lt;!&ndash; specify enter and exit transitions &ndash;&gt;-->
+    <!--<item name="android:windowExitTransition">@transition/activity_slide</item>-->
+    <!--&lt;!&ndash; specify shared element transitions &ndash;&gt;-->
+    <!--<item name="android:windowSharedElementEnterTransition">@transition/changebounds</item>-->
+    <!--<item name="android:windowSharedElementExitTransition">@transition/changebounds</item>-->
+    <!--</style>-->
+
+</resources>

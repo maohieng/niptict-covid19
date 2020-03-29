@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- This resource file used to store untranslatable strings. -->
+
+    <string name="facebook_app_id" translatable="false">727840120678563</string>
+    <!--if your App ID is 1234567, you should use fb1234567-->
+    <string name="fb_login_protocol_scheme" translatable="false">fb727840120678563</string>
+
+    <!--AdMob-->
+    <string name="banner_ad_unit_id" translatable="false">ca-app-pub-8917926493576669/5307229833</string>
+    <string name="interstitial_unit_id" translatable="false">ca-app-pub-8917926493576669/9089797834</string>
+    <string name="native_express_unit_id" translatable="false">ca-app-pub-8917926493576669/6518107839</string>
+
+    <!-- Material Animations -->
+    <string name="transit_image" translatable="false">transitImage</string>
+    <string name="transit_icon_more" translatable="false">transitIconMore</string>
+    <string name="transit_title" translatable="false">transitTitle</string>
+
+</resources>

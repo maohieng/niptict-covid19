@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">COVID19 Tracker Cambodia</string>
+    <string name="title_home">ពិនិត្យ</string>
+    <string name="title_dashboard">រាយការណ៍</string>
+    <string name="title_notifications">ពត៌មាន</string>
+    <string name="label_last_checkup">ការពិនិត្យចុងក្រោយរបស់អ្នក៖</string>
+    <string name="label_checkup_score_fmt">ពិន្ទុពី %1$s ទៅ %2$s៖</string>
+    <!--    <string name="msg_checkup_result_fmt">ពិន្ទុ %1$s ៖ %2$s</string>-->
+
+    <string name="start_checkup">ចាប់ផ្ដើមពិនិត្យ</string>
+    <string name="checkup">ការពិនិត្យសុខភាព</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="label_confirm_symptom_score">កម្រិតរោគសញ្ញារបស់អ្នក</string>
+</resources>
