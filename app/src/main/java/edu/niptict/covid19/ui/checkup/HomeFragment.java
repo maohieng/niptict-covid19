@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,6 +49,9 @@ public class HomeFragment extends Fragment {
         if (requestCode == CheckUpActivity.REQUEST_CODE_START_CHECKUP) {
             homeViewModel.setCheckUp(false);
             if (resultCode == Activity.RESULT_OK) {
+                Toast.makeText(requireContext(), "Total score: " + data.getIntExtra(CheckUpFragment.EXTRA_TOTAL_SCORE, 0),
+                        Toast.LENGTH_SHORT).show();
+
                 Log.i(TAG, "onActivityResult: result ok.");
             } else {
                 Log.e(TAG, "onActivityResult: result NOT ok");

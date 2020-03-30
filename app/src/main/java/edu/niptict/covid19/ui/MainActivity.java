@@ -1,4 +1,4 @@
-package edu.niptict.covid19;
+package edu.niptict.covid19.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import edu.niptict.covid19.R;
 
 public class MainActivity extends AppCompatActivity {
 

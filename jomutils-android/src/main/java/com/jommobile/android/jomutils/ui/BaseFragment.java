@@ -1,11 +1,13 @@
 package com.jommobile.android.jomutils.ui;
 
 import android.app.Activity;
+import android.app.Application;
 
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * Created by MAO Hieng on 10/25/18.
@@ -66,5 +68,14 @@ public class BaseFragment extends Fragment {
         }
 
         return activity != null ? activity.getTitle() : null;
+    }
+
+    protected Application requireApplication() {
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            return activity.getApplication();
+        } else {
+            return (Application) requireContext().getApplicationContext();
+        }
     }
 }

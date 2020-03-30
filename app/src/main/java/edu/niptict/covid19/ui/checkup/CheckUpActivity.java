@@ -3,15 +3,13 @@ package edu.niptict.covid19.ui.checkup;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.jommobile.android.jomutils.repository.Resource;
 import com.jommobile.android.jomutils.ui.AbstractToolbarActivity;
 
 import edu.niptict.covid19.R;
@@ -40,7 +38,6 @@ public class CheckUpActivity extends AbstractToolbarActivity {
 
     private ActivityCheckupBinding mBinding;
     private CheckUpFragment checkUpFragment;
-    private CheckUpViewModel mViewModel;
 
     @Override
     protected Toolbar setContentViewAndBindToolbar() {
@@ -54,18 +51,28 @@ public class CheckUpActivity extends AbstractToolbarActivity {
         checkUpFragment = (CheckUpFragment) getSupportFragmentManager().findFragmentById(R.id.container);
         String title = getString(R.string.checkup);
         setTitle(title);
+    }
 
-        mViewModel = new ViewModelProvider(this).get(CheckUpViewModel.class);
-        mViewModel.getCheckupQuestions().observe(this, listResource -> {
-            if (listResource != null && listResource.getStatus() != Resource.Status.LOADING) {
-                if (listResource.getStatus() == Resource.Status.SUCCESS) {
-//                    Log.i(TAG, "CheckupQuestions->onChange(): " + listResource.getData());
-                    checkUpFragment.updateUIs(listResource.getData());
-                } else {
-                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
-                    CheckUpActivity.this.finish();
-                }
-            }
-        });
+    @Override
+    public void onBackPressed() {
+        int totalScore = checkUpFragment.getTotalScore();
+        setScoreResult(totalScore);
+
+        super.onBackPressed();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            int totalScore = checkUpFragment.getTotalScore();
+            setScoreResult(totalScore);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    void setScoreResult(int totalScore) {
+        Intent data = new Intent();
+        data.putExtra(CheckUpFragment.EXTRA_TOTAL_SCORE, totalScore);
+        setResult(RESULT_OK, data);
     }
 }

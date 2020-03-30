@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="handler"
+            type="edu.niptict.covid19.ui.checkup.QuestionPageFragment.Handler" />
+
+        <variable
+            name="question"
+            type="edu.niptict.covid19.ui.checkup.CheckUpQuestion" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView5"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_confirm_symptom_score" />
+
+        <!--        <androidx.appcompat.widget.AppCompatRatingBar-->
+        <!--            android:id="@+id/ratingBar"-->
+        <!--            style="@style/ScoreRatingBar"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="16dp"-->
+        <!--            android:numStars="@{question.maxScore}"-->
+        <!--            android:rating="1"-->
+        <!--            android:stepSize="1" />-->
+
+        <com.hsalf.smileyrating.SmileyRating
+            android:id="@+id/smileyRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:onClick="@{() -> handler.clickOk()}"
+            android:text="@android:string/ok" />
+
+    </LinearLayout>
+</layout>

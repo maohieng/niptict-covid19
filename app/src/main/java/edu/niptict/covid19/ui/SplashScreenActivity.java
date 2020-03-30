@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import edu.niptict.covid19.MainActivity;
 import edu.niptict.covid19.R;
 
 /**

@@ -25,7 +25,7 @@ public class CheckUpRepository extends JomRepository {
 
     // https://healthy-cambodia.com/detail/check-coronavirus
     private static final CheckUpQuestion[] sSimulateQuestions = {
-            new CheckUpQuestion("តើអ្នកមាន ក្អក ដែររឺទេ?", 1, 0),
+            new CheckUpQuestion("តើអ្នកមាន ក្អក ដែររឺទេ?", 3, 0),
             new CheckUpQuestion("តើអ្នកមាន ជម្ងឺផ្ដាសសាយ ដែររឺទេ?", 1, 1),
             new CheckUpQuestion("តើអ្នកមាន រាគរុស ដែររឺទេ? ", 1, 2),
             new CheckUpQuestion("តើអ្នកមាន ឈឺបំពង់ក ដែររឺទេ?", 1, 3),
@@ -53,7 +53,7 @@ public class CheckUpRepository extends JomRepository {
                 // TODO: 3/29/2020 Handler is used for testing loading only. Use actual load result from db instead.
                 new Handler().postDelayed(() -> {
                     result.setValue(Arrays.asList(sSimulateQuestions));
-                }, 500);
+                }, 100);
 
                 return result;
             }

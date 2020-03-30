@@ -2,13 +2,15 @@ package edu.niptict.covid19.ui.checkup;
 
 import android.app.Application;
 import android.os.Handler;
+import android.util.Log;
+import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
+import androidx.lifecycle.Observer;
 
 import com.jommobile.android.jomutils.repository.Resource;
 
@@ -25,59 +27,172 @@ import edu.niptict.covid19.MyApplication;
  */
 public class CheckUpViewModel extends AndroidViewModel {
 
+    private static final String TAG = "CheckUpViewModel";
+
     private final CheckUpRepository mRepository;
 
-    private final LiveData<Resource<List<CheckUpQuestion>>> mCheckupQuestions;
-    private final MediatorLiveData<CheckUpQuestion> mCurrentCheckUp = new MediatorLiveData<>();
-    private final MutableLiveData<List<CheckUpAnswer>> mDoneCheckUp = new MutableLiveData<>(new ArrayList<>());
+    /**
+     * Available questions
+     */
+    private final MediatorLiveData<Resource<List<CheckUpAnswer>>> mQuestions = new MediatorLiveData<>();
+
+    private final MediatorLiveData<SparseArray<CheckUpAnswer>> mCurrentCheckUp = new MediatorLiveData<>();
 
     public CheckUpViewModel(@NonNull Application application) {
         super(application);
         mRepository = new CheckUpRepository((MyApplication) application);
-
-        // Load here
-        LiveData<Resource<List<CheckUpQuestion>>> resourceLiveData = mRepository.loadCheckUpQuestions();
-        mCheckupQuestions = Transformations.map(resourceLiveData, input -> input);
+        startCheckUp(0);
     }
 
-    private void setCurrentCheckUp(CheckUpQuestion question) {
-        CheckUpQuestion value = mCurrentCheckUp.getValue();
-        if (value == null || !value.equals(question)) {
-            mCurrentCheckUp.setValue(question);
+    LiveData<Resource<List<CheckUpAnswer>>> loadQuestions() {
+        Resource<List<CheckUpAnswer>> value = mQuestions.getValue();
+        Log.i(TAG, "loadQuestions: " + value);
+
+        if (value == null || value.getStatus() != Resource.Status.LOADING || value.getData() == null) {
+            final LiveData<Resource<List<CheckUpQuestion>>> resourceLiveData = mRepository.loadCheckUpQuestions();
+            mQuestions.addSource(resourceLiveData, input -> {
+                Resource<List<CheckUpAnswer>> answerResource = new ResourceExchange<List<CheckUpQuestion>, List<CheckUpAnswer>>(input1 -> {
+                    List<CheckUpAnswer> answers = new ArrayList<>(Objects.requireNonNull(input1).size());
+                    for (CheckUpQuestion datum : input1) {
+                        answers.add(new CheckUpAnswer(datum));
+                    }
+
+                    return answers;
+                }).apply(input);
+
+                if (answerResource != null && answerResource.getStatus() != Resource.Status.LOADING) {
+                    mQuestions.removeSource(resourceLiveData);
+                }
+                mQuestions.setValue(answerResource);
+            });
         }
+
+        return mQuestions;
     }
 
-    void startCheckUp(CheckUpQuestion question) {
-        mCurrentCheckUp.removeSource(mCheckupQuestions);
-        mCurrentCheckUp.addSource(mCheckupQuestions, listResource -> {
-            if (listResource != null && listResource.getStatus() != Resource.Status.LOADING) {
-                mCurrentCheckUp.removeSource(mCheckupQuestions);
-                setCurrentCheckUp(question);
-            }
+    private void startCheckUp(final int position) {
+        currentCheckUpObservesQuestions(checkUpAnswers -> {
+            Log.i(TAG, "startCheckUp: " + position);
+            CheckUpAnswer answer = checkUpAnswers.get(position);
+            answer.setStatus(CheckUpAnswer.Status.ANSWERING);
+
+            SparseArray<CheckUpAnswer> answerSparseArray = new SparseArray<>(1);
+            answerSparseArray.put(position, answer);
+
+            mCurrentCheckUp.setValue(answerSparseArray);
         });
     }
 
-    void answerCurrentCheckUp(int score, CheckUpQuestion nextQuestion) {
-        CheckUpQuestion value = mCurrentCheckUp.getValue();
-        if (score <= Objects.requireNonNull(value).maxScore) {
-            // Update Done
-            CheckUpAnswer answer = new CheckUpAnswer(value, score);
-            List<CheckUpAnswer> answers = mDoneCheckUp.getValue();
-            Objects.requireNonNull(answers).add(answer);
-            mDoneCheckUp.setValue(answers);
+    private void currentCheckUpObservesQuestions(Observer<List<CheckUpAnswer>> observer) {
+        Resource<List<CheckUpAnswer>> questions = mQuestions.getValue();
+        Log.i(TAG, "currentCheckUpObservesQuestions: " + questions);
 
-            // next question
-            new Handler().postDelayed(() -> setCurrentCheckUp(nextQuestion), 100);
+        List<CheckUpAnswer> data = null;
+        if (questions != null && (data = questions.getData()) != null && !data.isEmpty()) {
+            observer.onChanged(data);
+        } else {
+            mCurrentCheckUp.removeSource(mQuestions);
+            mCurrentCheckUp.addSource(mQuestions, listResource -> {
+                if (listResource == null || listResource.getStatus() == Resource.Status.LOADING) {
+                    return;
+                }
+
+                mCurrentCheckUp.removeSource(mQuestions);
+
+                List<CheckUpAnswer> data1 = listResource.getData();
+                if (data1 != null && !data1.isEmpty()) {
+                    observer.onChanged(data1);
+                }
+            });
         }
     }
 
+    CheckUpAnswer getCurrentCheckUpValue() {
+        SparseArray<CheckUpAnswer> value = mCurrentCheckUp.getValue();
+        return value.get(value.keyAt(0));
+    }
+
+    boolean answerCurrentAndGoNext(final int score) {
+        Resource<List<CheckUpAnswer>> questions = mQuestions.getValue();
+        Log.i(TAG, "currentCheckUpObservesQuestions: " + questions);
+
+        List<CheckUpAnswer> checkUpAnswers = null;
+        if (questions != null && (checkUpAnswers = questions.getData()) != null && !checkUpAnswers.isEmpty()) {
+            Log.i(TAG, "answerCurrentAndGoNext: " + checkUpAnswers);
+
+            SparseArray<CheckUpAnswer> value = mCurrentCheckUp.getValue();
+            final int currentPos = value.keyAt(0);
+            CheckUpAnswer answer = value.get(currentPos);
+
+            Log.i(TAG, "answerCurrentAndGoNext: " + answer);
+
+            if (score <= answer.getQuestion().maxScore) {
+                // Update
+                answer.setScore(score);
+                answer.setStatus(CheckUpAnswer.Status.ANSWERED);
+
+                // next question
+                int nextPosition = currentPos + 1;
+                if (nextPosition < Objects.requireNonNull(Objects.requireNonNull(mQuestions.getValue()).getData()).size()) {
+                    new Handler().postDelayed(() -> startCheckUp(nextPosition), 100);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    int getTotalScore() {
+        int total = 0;
+        List<CheckUpAnswer> data = mQuestions.getValue().getData();
+        for (CheckUpAnswer datum : data) {
+            total += datum.getScore().get();
+        }
+
+        return total;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Getters
     ///////////////////////////////////////////////////////////////////////////
 
+    LiveData<SparseArray<CheckUpAnswer>> getCurrentCheckUp() {
+        return mCurrentCheckUp;
+    }
 
-    public LiveData<Resource<List<CheckUpQuestion>>> getCheckupQuestions() {
-        return mCheckupQuestions;
+//    LiveData<Resource<List<CheckUpAnswer>>> getQuestions() {
+//        return mQuestions;
+//    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Others
+    ///////////////////////////////////////////////////////////////////////////
+
+    public static class ResourceExchange<T, R> implements Function<Resource<T>, Resource<R>> {
+
+        @NonNull
+        private final Function<T, R> sourceF;
+
+        public ResourceExchange(@NonNull Function<T, R> sourceF) {
+            this.sourceF = sourceF;
+        }
+
+        @Override
+        public Resource<R> apply(Resource<T> source) {
+            if (source == null)
+                return null;
+
+            Log.i(TAG, "apply: " + source);
+
+            Resource.Status status = source.getStatus();
+            if (status == Resource.Status.LOADING) {
+                return Resource.Factory.loading();
+            } else if (status == Resource.Status.SUCCESS) {
+                return Resource.Factory.success(sourceF.apply(source.getData()));
+            } else {
+                return Resource.Factory.error(source.getMessage(), source.getCause());
+            }
+        }
     }
 }

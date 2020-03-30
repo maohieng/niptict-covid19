@@ -36,6 +36,11 @@ public final class JOMUIs {
         int visibility = visible ? View.VISIBLE : View.GONE;
 
         boolean isInflated = stubProxy.isInflated();
+
+        if (!visible && !isInflated) {
+            return;
+        }
+
         if (!isInflated) {
             stubProxy.getViewStub().setVisibility(visibility);
         } else {

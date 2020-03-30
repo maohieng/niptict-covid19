@@ -1,7 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.viewpager2.widget.ViewPager2 xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout>
 
-</androidx.viewpager2.widget.ViewPager2>
+    <data>
+
+        <variable
+            name="adapter"
+            type="edu.niptict.covid19.ui.checkup.CheckUpFragment.QuestionPageAdapter" />
+
+        <variable
+            name="pageChangeCallback"
+            type="androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback" />
+    </data>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:registerCallback="@{pageChangeCallback}"
+            app:pagerAdapter="@{adapter}">
+
+        </androidx.viewpager2.widget.ViewPager2>
+
+        <com.rd.PageIndicatorView
+            android:id="@+id/pageIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="32dp"
+            app:piv_animationType="worm"
+            app:piv_dynamicCount="true"
+            app:piv_interactiveAnimation="true"
+            app:piv_selectedColor="@color/colorPrimary"
+            app:piv_unselectedColor="@android:color/darker_gray"
+            app:piv_viewPager="@id/pager" />
+
+    </FrameLayout>
+</layout>
