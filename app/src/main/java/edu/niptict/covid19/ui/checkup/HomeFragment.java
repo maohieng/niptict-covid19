@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,6 +36,7 @@ public class HomeFragment extends Fragment {
                 CheckUpActivity.startForResult(HomeFragment.this);
             }
         });
+
         mBinding.setLifecycleOwner(getViewLifecycleOwner());
         mBinding.setViewModel(homeViewModel);
 
@@ -47,11 +47,10 @@ public class HomeFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CheckUpActivity.REQUEST_CODE_START_CHECKUP) {
-            homeViewModel.setCheckUp(false);
+            homeViewModel.setCheckingUp(false);
             if (resultCode == Activity.RESULT_OK) {
-                Toast.makeText(requireContext(), "Total score: " + data.getIntExtra(CheckUpFragment.EXTRA_TOTAL_SCORE, 0),
-                        Toast.LENGTH_SHORT).show();
-
+                int score = data.getIntExtra(CheckUpFragment.EXTRA_TOTAL_SCORE, 0);
+                homeViewModel.setCheckUpScore(score);
                 Log.i(TAG, "onActivityResult: result ok.");
             } else {
                 Log.e(TAG, "onActivityResult: result NOT ok");

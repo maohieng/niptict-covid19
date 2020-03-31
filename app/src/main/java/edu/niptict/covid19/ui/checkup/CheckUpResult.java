@@ -20,10 +20,19 @@ public class CheckUpResult {
         this.result = result;
     }
 
+    /**
+     * Gets min score (inclusive)
+     *
+     * @return
+     */
     public int getMinScore() {
         return minScore;
     }
 
+    /**
+     * Gets max score (exclusive)
+     * @return
+     */
     public int getMaxScore() {
         return maxScore;
     }

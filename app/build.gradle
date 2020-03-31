@@ -92,6 +92,9 @@ dependencies {
     // Test helper
     testImplementation "androidx.room:room-testing:$rootProject.roomVersion"
 
+    // Guava
+    implementation "com.google.guava:guava:28.2-android"
+
     // PageIndicatorView
     implementation 'com.romandanylyk:pageindicatorview:1.0.3'
     // SmileyRating

@@ -1,29 +1,57 @@
 package edu.niptict.covid19.ui.checkup;
 
+import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.Transformations;
 
-public class HomeViewModel extends ViewModel {
+import com.jommobile.android.jomutils.AbsentLiveData;
+import com.jommobile.android.jomutils.repository.Resource;
+
+import edu.niptict.covid19.MyApplication;
+
+public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = "HomeViewModel";
+
+    private final CheckUpRepository mRepository;
 
     private final MutableLiveData<Boolean> mIsCheckingUp;
 
-    private final LiveData<CheckUpResult> mLastResult;
+    private final MutableLiveData<Integer> mScore;
+    private final LiveData<Resource<CheckUpResult>> mCheckUpResult;
 
-    public HomeViewModel() {
-        mLastResult = new MutableLiveData<>(new CheckUpResult(3, 5, "ត្រូវបំពេញជាតិទឹក ដោយហូបទឹកឱ្យបានច្រើន ៣ទៅ៤លីត្រក្នុងមួយថ្ងៃ ថែបំប៉នសុខភាព ហើយត្រូវអនុវត្តន៍តាម វិធានការ ការពារអនាម័យ ឱ្យបានខ្ចាប់ខ្ចួន ធ្វើការតាមដានបន្ត និងត្រូវធ្វើការ វាយតំលៃឡើងវីញម្ដងទៀតនៅ ២ថ្ងៃក្រោយ(រៀងរាល់២ថ្ងៃម្ដង) និងត្រូវរក្សារគំលាតពីសមាជិកក្បែរខ្លួន រយៈពេល១៤ថ្ងៃ។"));
+    public HomeViewModel(@NonNull Application application) {
+        super(application);
+        mRepository = new CheckUpRepository((MyApplication) application);
         mIsCheckingUp = new MutableLiveData<>(false);
+
+        mScore = new MutableLiveData<>(-1);
+        mCheckUpResult = Transformations.switchMap(mScore, input -> {
+            if (input == null || input < 0) {
+                return AbsentLiveData.create();
+            } else {
+                return mRepository.loadCheckUpResult(input);
+            }
+        });
     }
 
-    public void setCheckUp(boolean checking) {
+    public void setCheckingUp(boolean checking) {
         Log.i(TAG, "setCheckUp: " + checking);
 
         Boolean value = mIsCheckingUp.getValue();
         if (value == null || value != checking) {
             mIsCheckingUp.setValue(checking);
+        }
+    }
+
+    void setCheckUpScore(int score) {
+        Integer value = mScore.getValue();
+        if (value == null || value < 0 || value != score) {
+            mScore.setValue(score);
         }
     }
 
@@ -35,7 +63,11 @@ public class HomeViewModel extends ViewModel {
         return mIsCheckingUp;
     }
 
-    public LiveData<CheckUpResult> getLastResult() {
-        return mLastResult;
+    public LiveData<Resource<CheckUpResult>> getCheckUpResult() {
+        return mCheckUpResult;
+    }
+
+    public LiveData<Integer> getScore() {
+        return mScore;
     }
 }
