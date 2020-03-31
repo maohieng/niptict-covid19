@@ -10,4 +10,5 @@ import com.jommobile.android.jomutils.JOMApp;
  * @autor MAO Hieng 3/29/2020
  */
 public class MyApplication extends MultiDexApplication implements JOMApp {
+
 }

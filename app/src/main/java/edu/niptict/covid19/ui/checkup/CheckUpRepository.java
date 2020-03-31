@@ -1,5 +1,7 @@
 package edu.niptict.covid19.ui.checkup;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
@@ -25,9 +27,12 @@ import edu.niptict.covid19.MyApplication;
  */
 public class CheckUpRepository extends JomRepository {
 
+    private static final String SHARED_PREFERENCE_NAME = "check_up_shared_preference";
+    private static final String SHARED_NAME_LASTEST_SCORE = "check_up_lastest_score";
+
     // https://healthy-cambodia.com/detail/check-coronavirus
     private static final CheckUpQuestion[] sCheckUpQuestions = {
-            new CheckUpQuestion("តើអ្នកមាន ក្អក ដែររឺទេ?", 3, 0),
+            new CheckUpQuestion("តើអ្នកមាន ក្អក ដែររឺទេ?", 1, 0),
             new CheckUpQuestion("តើអ្នកមាន ជម្ងឺផ្ដាសសាយ ដែររឺទេ?", 1, 1),
             new CheckUpQuestion("តើអ្នកមាន រាគរុស ដែររឺទេ? ", 1, 2),
             new CheckUpQuestion("តើអ្នកមាន ឈឺបំពង់ក ដែររឺទេ?", 1, 3),
@@ -51,8 +56,13 @@ public class CheckUpRepository extends JomRepository {
             new CheckUpResult(13, 21, "ត្រូវទូរសព្ទ័ទៅលេខ ១១៥ ឬលេខទូរស័ព្ទរបស់មន្ទីរសុខាភិបាលខេត្ត-ក្រុង ដែលនៅជិតលោកអ្នកបំផុត(ពេទ្យរដ្ឋ)។")
     };
 
+    private final SharedPreferences mSharedPreferences;
+    private final SharedPreferences.Editor mEditor;
+
     public CheckUpRepository(MyApplication app) {
         super(app.getAppExecutors());
+        mSharedPreferences = app.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
+        mEditor = mSharedPreferences.edit();
     }
 
     LiveData<Resource<List<CheckUpQuestion>>> loadCheckUpQuestions() {
@@ -98,5 +108,14 @@ public class CheckUpRepository extends JomRepository {
                 return result;
             }
         }.bind().asLiveData();
+    }
+
+    void saveLatestScore(int score) {
+        mEditor.putInt(SHARED_NAME_LASTEST_SCORE, score);
+        mEditor.apply();
+    }
+
+    int getLatestScore() {
+        return mSharedPreferences.getInt(SHARED_NAME_LASTEST_SCORE, -1);
     }
 }

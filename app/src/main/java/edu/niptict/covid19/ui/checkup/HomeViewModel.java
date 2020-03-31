@@ -29,7 +29,7 @@ public class HomeViewModel extends AndroidViewModel {
         mRepository = new CheckUpRepository((MyApplication) application);
         mIsCheckingUp = new MutableLiveData<>(false);
 
-        mScore = new MutableLiveData<>(-1);
+        mScore = new MutableLiveData<>(mRepository.getLatestScore());
         mCheckUpResult = Transformations.switchMap(mScore, input -> {
             if (input == null || input < 0) {
                 return AbsentLiveData.create();
@@ -49,9 +49,13 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     void setCheckUpScore(int score) {
+        if (score < 0)
+            return;
+
         Integer value = mScore.getValue();
         if (value == null || value < 0 || value != score) {
             mScore.setValue(score);
+            mRepository.saveLatestScore(score);
         }
     }
 

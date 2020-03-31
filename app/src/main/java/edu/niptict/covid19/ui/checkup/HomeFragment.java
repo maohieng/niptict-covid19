@@ -2,6 +2,7 @@ package edu.niptict.covid19.ui.checkup;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +24,8 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding mBinding;
     private HomeViewModel homeViewModel;
+
+    private SharedPreferences mSharedPreferences;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

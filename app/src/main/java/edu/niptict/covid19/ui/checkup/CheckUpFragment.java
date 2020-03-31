@@ -98,7 +98,13 @@ public class CheckUpFragment extends BaseFragment {
     }
 
     int getTotalScore() {
-        return mViewModel.getTotalScore();
+        int currentCheckUpPosition = getCurrentCheckUpPosition();
+        if (currentCheckUpPosition == 0) {
+            // didn't answer
+            return -1;
+        } else {
+            return mViewModel.getTotalScore();
+        }
     }
 
     boolean answerCurrentAndGoNext(final int score) {
@@ -107,6 +113,10 @@ public class CheckUpFragment extends BaseFragment {
 
     CheckUpAnswer getCurrentCheckUpValue() {
         return mViewModel.getCurrentCheckUpValue();
+    }
+
+    int getCurrentCheckUpPosition() {
+        return mViewModel.getCurrentCheckUpPosition();
     }
 
     public static class QuestionPageAdapter extends FragmentStateAdapter {

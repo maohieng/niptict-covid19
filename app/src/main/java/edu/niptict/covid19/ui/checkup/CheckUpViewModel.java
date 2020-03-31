@@ -52,7 +52,7 @@ public class CheckUpViewModel extends AndroidViewModel {
             final LiveData<Resource<List<CheckUpQuestion>>> resourceLiveData = mRepository.loadCheckUpQuestions();
             mQuestions.addSource(resourceLiveData, input -> {
                 Resource<List<CheckUpAnswer>> answerResource = new ResourceExchange<List<CheckUpQuestion>, List<CheckUpAnswer>>(input1 -> {
-                    List<CheckUpAnswer> answers = new ArrayList<>(Objects.requireNonNull(input1).size());
+                    List<CheckUpAnswer> answers = new ArrayList<>(input1.size());
                     for (CheckUpQuestion datum : input1) {
                         answers.add(new CheckUpAnswer(datum));
                     }
@@ -109,7 +109,12 @@ public class CheckUpViewModel extends AndroidViewModel {
 
     CheckUpAnswer getCurrentCheckUpValue() {
         SparseArray<CheckUpAnswer> value = mCurrentCheckUp.getValue();
-        return value.get(value.keyAt(0));
+        return value.get(getCurrentCheckUpPosition());
+    }
+
+    int getCurrentCheckUpPosition() {
+        SparseArray<CheckUpAnswer> value = mCurrentCheckUp.getValue();
+        return value.keyAt(0);
     }
 
     boolean answerCurrentAndGoNext(final int score) {
