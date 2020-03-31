@@ -2,4 +2,12 @@
 <resources>
 
     <style name="ScoreRatingBar" parent="Widget.AppCompat.RatingBar.Indicator"></style>
+
+    <style name="ButtonPrimary" parent="Widget.AppCompat.Button.Colored" />
+
+    <style name="ButtonSecondary" parent="Widget.AppCompat.Button.Borderless.Colored"></style>
+
+    <style name="ButtonSecondary.Border">
+        <item name="android:background">@drawable/bg_btn_border_colored_material</item>
+    </style>
 </resources>

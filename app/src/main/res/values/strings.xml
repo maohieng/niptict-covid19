@@ -7,7 +7,7 @@
     <string name="label_checkup_score_fmt">ពិន្ទុរបស់អ្នក %1$s៖</string>
     <!--    <string name="msg_checkup_result_fmt">ពិន្ទុ %1$s ៖ %2$s</string>-->
 
-    <string name="start_checkup">ចាប់ផ្ដើមពិនិត្យ</string>
+    <string name="start_checkup">ចាប់ផ្ដើមពិនិត្យសុខភាព</string>
     <string name="checkup">ការពិនិត្យសុខភាព</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

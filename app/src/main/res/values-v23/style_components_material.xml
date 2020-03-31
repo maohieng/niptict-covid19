@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ButtonSecondary.Border">
+        <item name="android:background">@drawable/bg_btn_border_colored_material</item>
+    </style>
+</resources>
